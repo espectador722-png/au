@@ -1,0 +1,49 @@
+ slugifyServer (arriba) vuelve a tener uso.
+const GAMES_PROJECT_ID = '75579701';           // senpai1940/juegos
+const GAMES_FILE_PATH_SERVER = 'juegos.json';
+const EXCLUSIVE_GAMES_FILE_PATH = 'exclusivos.json';
+
+// GET /api/patreon/exclusive-games — Authorization: Bearer <sessionToken>
+// Solo devuelve datos a mecenas con membresía activa verificada (mismo
+// chequeo que patreonCheck, contra el registro real en KV — el frontend
+// nunca decide esto solo). A un no-mecenas le contesta connected:false y
+// games:[] — el sitio público ya sabe mostrar el gate de "conectate con
+// Patreon" en ese caso (mismo patrón que renderExclusiveGames en
+// juegos-render.js).
+async function patreonExclusiveGames(request, env, origin) {
+    const email = await requireSession(request, env);
+    if (!email) return json({ ok: true, connected: false, games: [] }, 200, origin);
+
+    const record = await kvGet(env.EZ_DATA, `patreon:${email}`);
+    const connected = !!(record && record.connected);
+    if (!connected) return json({ ok: true, connected: false, games: [] }, 200, origin);
+
+    let games;
+    try {
+        const raw = await glLoadJsonFromProject(env, GAMES_PROJECT_ID, EXCLUSIVE_GAMES_FILE_PATH);
+        games = Array.isArray(raw) ? raw : [];
+    } catch (e) {
+        return err('Error al conectar con el almacenamiento', 502, origin);
+    }
+    return json({ ok: true, connected: true, games }, 200, origin);
+}
+
+// ── Géneros exclusivos de Patreon (2026-09-21) ──────────────────────────
+// Lista corta de categorías completas marcadas "solo Patreon" — cualquier
+// juego con alguna de estas categorías se muestra bloqueado (visible, con
+// candado) en el sitio público hasta que el visitante conecte Patreon.
+// Vive en patreon-config.json, mismo repo que juegos.json — archivo
+// separado (no un campo más en juegos.json) porque es una lista corta e
+// independiente que solo edita el admin, no el flujo normal de alta de
+// juegos del formulario.
+const PATREON_CONFIG_FILE_PATH = 'patreon-config.json';
+let patreonGenresCache = null;       // { generos: string[], ts: number }
+const PATREON_GENRES_CACHE_MS = 5 * 60 * 1000; // 5 min — ver nota de cache en proxyGitlab
+
+async function loadPatreonGenres(env) {
+    if (patreonGenresCache && (Date.now() - patreonGenresCache.ts) < PATREON_GENRES_CACHE_MS) {
+        return patreonGenresCache.generos;
+    }
+    let raw;
+    try { raw = await glLoadJsonFromProject(env, GAMES_PROJECT_ID, PATREON_CONFIG_FILE_PATH); }
+    catch (e) { return patreonGenresCache ? patreonGenresCache.generos : []; 

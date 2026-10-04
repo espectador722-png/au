@@ -1,0 +1,1 @@
+!function(global){const registry=new Map,Rotonda={provide:function(name,api){if(!name)throw new Error("Rotonda.provide requiere un nombre");registry.set(name,api||{})}};global.Rotonda=Rotonda}(window);

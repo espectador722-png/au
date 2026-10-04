@@ -1,0 +1,84 @@
+image: node:20
+
+# ─── VARIABLES REQUERIDAS EN GitLab CI/CD → Settings → CI/CD → Variables ───
+#
+#  INDEXNOW_KEY               (Masked: sí, Protected: sí)
+#    String hex de 32-128 chars. Genera uno con:
+#    node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+#
+#  CLOUDFLARE_API_TOKEN       (Masked: sí, Protected: sí)
+#    Generalo en: Cloudflare → My Profile → API Tokens → Create Token
+#    Usar plantilla: "Edit Cloudflare Workers"
+#
+#  CLOUDFLARE_ACCOUNT_ID      (Masked: sí, Protected: sí)
+#    Lo encontrás en: Cloudflare Dashboard → lado derecho → Account ID
+#
+# ─── PIPELINE PROGRAMADO (recomendado) ──────────────────────────────────────
+#  Para indexar el sitio completo de forma continua, configurá un pipeline
+#  diario en: CI/CD → Schedules → New schedule → Cron: "0 8 * * *" (8 AM UTC)
+#  Rama: main.
+# ────────────────────────────────────────────────────────────────────────────
+
+stages:
+  - build
+  - deploy
+
+# ─── JOB 1: Generar sitio estático → GitLab Pages ───────────────────────────
+pages:
+  stage: deploy
+  script:
+    - echo "🚀 INICIANDO PIPELINE - Eclipse Zone..."
+
+    # Instalar dependencias solo si existe package-lock.json
+    - '[ -f package-lock.json ] && npm ci || echo "Sin package-lock.json, omitiendo npm ci"'
+
+    # Generar todo: páginas estáticas, sitemap, robots.txt, key file de IndexNow
+    - echo "⚙️  Ejecutando generate-everything.js..."
+    - node generate-everything.js
+
+    # Copia explícita de estáticos (respaldo seguro)
+    - echo "📦 Copiando archivos estáticos..."
+    - cp -r css    public/ 2>/dev/null || true
+    - cp -r js     public/ 2>/dev/null || true
+    - cp -r vendor public/ 2>/dev/null || true
+    - cp -r cosmetics public/ 2>/dev/null || true
+    - cp favicon.png public/ 2>/dev/null || true
+    - cp Eclipse.png public/ 2>/dev/null || true
+
+    # Generar manifest.json para la carpeta de avatares
+    - echo "🖼️  Generando cosmetics/avatar/manifest.json..."
+    - mkdir -p public/cosmetics/avatar
+    - |
+      if [ -d "public/cosmetics/avatar" ]; then
+        files=$(find public/cosmetics/avatar -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" -o -iname "*.webp" -o -iname "*.svg" \) -printf '"%f",' 2>/dev/null | sed 's/,$//');
+        echo "[${files}]" > public/cosmetics/avatar/manifest.json
+        echo "✅ cosmetics/avatar/manifest.json generado: $(cat public/cosmetics/avatar/manifest.json)"
+      fi
+
+    # Verificación final
+    - echo "📁 Contenido de public/:"
+    - ls -la public/
+    - echo "🎮 Juegos generados:";    ls public/juego/   | wc -l
+    - echo "📰 Noticias generadas:";  ls public/noticia/ | wc -l
+    - echo "🗺️  Sitemap:";            ls -lh public/sitemap.xml
+    - echo "🔑 IndexNow key file:";   ls public/*.txt 2>/dev/null || echo "⚠️  No se encontró key file (falta INDEXNOW_KEY)"
+
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+
+# ─── JOB 2: Deployar worker.js → Cloudflare Workers ────────────────────────
+deploy_worker:
+  stage: deploy
+  script:
+    - echo "☁️  Deployando Worker a Cloudflare..."
+    - npm install -g wrangler
+    - wrangler deploy
+    - echo "✅ Worker deployado correctamente"
+  variables:
+    CLOUDFLARE_API_TOKEN:  $CLOUDFLARE_API_TOKEN
+    CLOUDFLARE_ACCOUNT_ID: $CLOUDFLARE_ACCOUNT_ID
+  only:
+    - main

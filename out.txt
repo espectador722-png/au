@@ -1,0 +1,18 @@
+==== exclusive-link
+/check                      → { connected }  [Bearer sessionToken] | //        (endpoint /api/patreon/exclusive-link eliminado 2026-08-04 junto con | //        el panel "💎 Link exclusivo de Patreon" — ver
+---
+   // NOTA 2026-08-04: se eliminó el panel "💎 Link exclusivo de Patreon" |             // (/api/admin/exclusive-link, /api/admin/exclusive-link/remove y |             // /api/patreon/exclusive-link) a ped
+---
+liminó el panel "💎 Link exclusivo de Patreon" |             // (/api/admin/exclusive-link, /api/admin/exclusive-link/remove y |             // /api/patreon/exclusive-link) a pedido — era confuso y solo lo
+---
+      // (/api/admin/exclusive-link, /api/admin/exclusive-link/remove y |             // /api/patreon/exclusive-link) a pedido — era confuso y solo lo podía |             // usar SITE_ADMIN_EMAIL. Ahora u
+---
+on" (ese panel se eliminó junto con | // glLoadExclusivos/glSaveExclusivos y los endpoints /api/admin/exclusive-link* | // y /api/patreon/exclusive-link). Ahora es, como juegos.json, un array de | // juegos
+---
+n | // glLoadExclusivos/glSaveExclusivos y los endpoints /api/admin/exclusive-link* | // y /api/patreon/exclusive-link). Ahora es, como juegos.json, un array de | // juegos completos — los que se marcan "Ju
+---
+s seguía | // escribiendo en juegos.json con links vacíos, y el único consumidor real | // (scripts/set-exclusive-link.js) llamaba a un endpoint que este mismo | // comentario dice que ya no existe. Nunca h
+---
+==== adminSetExclusiveLink
+6-08-04: se eliminaron acá glLoadExclusivos/glSaveExclusivos, | // requireSiteAdmin/SITE_ADMIN_EMAIL, adminSetExclusiveLink, | // adminRemoveExclusiveLink y patreonExclusiveLink — eran el backend del pane
+---

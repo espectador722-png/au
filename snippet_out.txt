@@ -1,0 +1,28 @@
+eck                      → { connected }  [Bearer sessionToken]
+//        (endpoint /api/patreon/exclusive-link eliminado 2026-08-04 junto con
+//        el panel "💎 Link exclusivo de Patreon" — ver nota más abajo, cerca
+//        de GITLAB_BLOCKED_FILES y del bloque de rutas /api/patreon/*.)
+//
+// STORAGE: Cloudflare KV namespace "EZ_DATA"
+//   Claves usadas:
+//     "friends"          → array de pares de amistad
+//     "pending_requests" → array de solicitudes pendientes
+//     "dms:{convId}"     → array de mensajes por conversación
+//     "imgcache:{hash}"       → bytes de una imagen cacheada
+//     "imgcache:{hash}:meta"  → { contentType, cachedAt, source }
+//     "patreon:{email}"        → { patreonUserId, connected, patronStatus, verifiedAt }
+//     "exclusive_links:{slug}" → { links, linksPorTraductor } — link real de un
+//                                 juego exclusivo (slug = slugify() del título)
+//
+// SECRETS requeridos en Cloudflare Workers:
+//   wrangler secret put GITLAB_TOKEN
+//   wrangler secret put SESSION_SECRET          (random, 32+ bytes — firma sessionToken)
+//   wrangler secret put PATREON_CLIENT_ID       (público, pero igual como secret por simpleza)
+//   wrangler secret put PATREON_CLIENT_SECRET
+// ============================================================
+
+// ── Rate limiter en memoria del isolate ─────────────────────
+// NOTA: antes vivía en KV, pero eso costaba UNA ESCRITURA de KV por request.
+// El plan free de KV permite 1000 escrituras/día — se agotaba la cuota y
+// kv.put() lanzaba excepción, tirando 500 en TODAS las rutas rate-limiteadas
+// 

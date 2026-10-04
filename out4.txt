@@ -1,0 +1,14 @@
+function slugifyServer(text) {
+    if (!text) return '';
+    return text.toString().toLowerCase()
+        .normalize('NFD').replace(/[̀-ͯ]/g, '')
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/--+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+// Debe coincidir con el redirect_uri registrado en el portal de Patreon.
+const PATREON_REDIRECT_URI = 'https://eclipsezonehub.com/patreon/callback';
+
+// POST /api/patreon/callback  { code }  — Authorization: Bearer <sessio

@@ -1,0 +1,25 @@
+ }
+    return false;
+}
+
+// Cola en memoria de esta instancia del Worker: serializa todos los writes
+// de comentarios/estrellas entre sí, para que dos requests concurrentes al
+// mismo Worker nunca lean el mismo estado "viejo" antes de escribir.
+let _commentsWriteQueue = Promise.resolve();
+function queueCommentsWrite(fn) {
+    const result = _commentsWriteQueue.then(fn, fn);
+    _commentsWriteQueue = result.catch(() => {});
+    return result;
+}
+
+const COMMENT_MAX_LEN = 1000;
+
+function sanitizeCommentAuthor(user) {
+    return {
+        author      : (user && (user.nombre || user.name)) || 'Anónimo',
+        userEmail   : (user && user.email) || null,
+        userId      : (user && user.id) || null,
+        avatar      : (user && user.avatar) || null,
+        avatarDeco  : (user && user.avatarDeco) || null,
+        placaNombre : (user && user.placaNombre) || null,
+        efectoPerfil: (us

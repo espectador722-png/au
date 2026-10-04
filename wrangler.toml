@@ -1,0 +1,36 @@
+# wrangler.toml — Eclipse Zone Worker
+# Solo para el Worker (wrangler deploy).
+# El deploy de Pages usa --no-config para ignorar este archivo.
+
+name               = "eclipsezone-api"
+main               = "worker.js"
+compatibility_date = "2024-01-01"
+# Sin esto, un [vars] en este archivo borra las variables cargadas en el dashboard.
+keep_vars          = true
+
+# ── KV Namespace ─────────────────────────────────────────────
+[[kv_namespaces]]
+binding    = "EZ_DATA"
+id         = "f7fc27a31cf64078bf82e479c2ceb16d"
+preview_id = "f7fc27a31cf64078bf82e479c2ceb16d"
+
+# ── Rutas — el Worker maneja /api/* en el dominio principal ──
+# Sin esto el Worker solo existe en workers.dev, no en eclipsezonehub.com
+[[routes]]
+pattern = "eclipsezonehub.com/api/*"
+zone_name = "eclipsezonehub.com"
+
+[[routes]]
+pattern = "www.eclipsezonehub.com/api/*"
+zone_name = "eclipsezonehub.com"
+
+# ── Vistas de juegos/mangas (D1, sin tokens) ────────────────
+# Cada visita = UPSERT en view_totals + view_hourly (POST /api/view).
+# El cron diario borra los buckets por hora de más de 8 días.
+[[d1_databases]]
+binding       = "EZ_VIEWS_DB"
+database_name = "ez-views"
+database_id   = "fa5e4a4b-a21d-4193-b539-91241143e29b"
+
+[triggers]
+crons = ["10 3 * * *"]

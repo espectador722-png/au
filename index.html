@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eclipse Zone - Juegos y mangas traducidos</title>
+    <meta name="description" content="Descarga los mejores juegos y mangas traducidos al español en Eclipse Zone. Actualizaciones diarias.">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <!-- Nota: generate-everything.js reemplaza estas etiquetas por versiones específicas
+         de cada página (título/descripción/imagen) al generar public/. Estas son el
+         fallback estático para cuando este archivo se sirve/visualiza sin pasar por el build. -->
+    <link rel="canonical" href="https://eclipsezonehub.com/">
+    <meta name="robots" content="index, follow">
+    <meta property="og:type"         content="website">
+    <meta property="og:url"          content="https://eclipsezonehub.com/">
+    <meta property="og:title"        content="Eclipse Zone - Juegos y mangas traducidos">
+    <meta property="og:description"  content="Descarga los mejores juegos y mangas traducidos al español en Eclipse Zone. Actualizaciones diarias.">
+    <meta property="og:image"        content="https://eclipsezonehub.com/Eclipse.png">
+    <meta property="og:locale"       content="es_ES">
+    <meta property="og:site_name"    content="Eclipse Zone">
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:site"        content="@eclipsezonehub">
+    <meta name="twitter:title"       content="Eclipse Zone - Juegos y mangas traducidos">
+    <meta name="twitter:description" content="Descarga los mejores juegos y mangas traducidos al español en Eclipse Zone. Actualizaciones diarias.">
+    <meta name="twitter:image"       content="https://eclipsezonehub.com/Eclipse.png">
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link href="/vendor/bootstrap/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet"/>
+    <link href="/css/style.css" rel="stylesheet"/>
+    <link href="/css/themes.css" rel="stylesheet"/>
+    <link href="/css/themes-contrast.css" rel="stylesheet"/>
+    <link href="/css/home.css" rel="stylesheet"/>
+    <link href="/css/juegos.css" rel="stylesheet"/>
+    <link href="/css/noticias.css" rel="stylesheet"/>
+    <link href="/css/auth.css" rel="stylesheet"/>
+    <link href="/css/manga.css" rel="stylesheet"/>
+    <link href="/css/comments.css" rel="stylesheet"/>
+    <link href="/css/profile.css" rel="stylesheet"/>
+    <link href="/css/discord-settings.css" rel="stylesheet"/>
+    <link href="/css/discord-friends.css" rel="stylesheet"/>
+    <link href="/css/onboarding.css" rel="stylesheet"/>
+    <link href="/css/social-popup.css" rel="stylesheet"/>
+    <style>
+        /* uploader block estilos — ahora inline entre favBtn y Cerrar */
+        .uploader-profile-block {
+            margin: 10px 0;
+            border: 1px solid var(--border-color, rgba(255,255,255,0.1));
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .uploader-profile-inner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: rgba(0,0,0,0.15);
+        }
+
+        .uploader-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .uploader-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .uploader-name {
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .uploader-badge {
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin: 2px 0 4px;
+        }
+
+        .uploader-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 0.72rem;
+            color: var(--muted);
+        }
+
+        .uploader-meta i {
+            color: var(--primary);
+            margin-right: 2px;
+        }
+
+        .uploader-profile-btn {
+            flex-shrink: 0;
+            font-size: 0.8rem;
+            padding: 6px 10px;
+            white-space: nowrap;
+        }
+
+        /* Estilos para la barra de filtro de plataforma */
+        .platform-filter-bar {
+            margin-bottom: 12px;
+            padding: 0 4px;
+        }
+        .platform-filter-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text);
+            transition: all 0.2s ease;
+        }
+        .platform-filter-btn:hover {
+            background: rgba(88,101,242,0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .platform-filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* ========== LOGO HEADER ========== */
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Contenedor propio para el logo (separado de header-logo-text): el
+           glow superpuesto usa position:absolute + inset:0, que se ajusta al
+           ancestro posicionado más cercano — sin este wrapper, ese ancestro
+           era .header-logo (que también contiene el texto "EclipseZone"), así
+           que el glow se estiraba sobre todo el header en vez de solo el logo
+           (bug real visto en producción: dos logos, uno "flotando" arriba). */
+        .header-logo-img-wrap {
+            position: relative;
+            width: clamp(32px, 5vw, 52px);
+            height: clamp(32px, 5vw, 52px);
+            flex-shrink: 0;
+        }
+
+        .header-logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            filter: drop-shadow(0 0 4px rgba(88, 101, 242, 0.5));
+        }
+        /* logoPulse animaba "filter" directo: no es compositable (repinta en
+           cada frame durante toda la vida de la página, header siempre visible)
+           y PageSpeed lo marca como riesgo de CLS/jank. Se logra el mismo pulso
+           con "opacity" (sí compositable) sobre una copia superpuesta con el
+           filter más intenso. */
+        .header-logo-img-glow {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            filter: drop-shadow(0 0 10px rgba(167,139,250,0.85));
+            opacity: 0;
+            pointer-events: none;
+        }
+        @media (prefers-reduced-motion: no-preference) {
+            .header-logo-img-glow { animation: logoPulse 3s ease-in-out infinite; }
+        }
+
+        .header-logo-text {
+            font-size: clamp(1.25rem, 3vw, 2rem);
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            background: linear-gradient(
+                90deg,
+                #a78bfa,
+                #818cf8,
+                #5865F2,
+                #60a5fa,
+                #a78bfa
+            );
+            background-size: 250% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-position: 0% center;
+            text-shadow: none;
+            white-space: nowrap;
+        }
+        @media (prefers-reduced-motion: no-preference) {
+            .header-logo-text { animation: shimmerText 3.5s linear infinite; }
+        }
+
+        /* Ajuste extra en pantallas grandes (≥1024px) */
+        @media (min-width: 1024px) {
+            .header-logo-img-wrap {
+                width: 48px;
+                height: 48px;
+            }
+            .header-logo-text {
+                font-size: 1.85rem;
+            }
+            .header-logo {
+                gap: 12px;
+            }
+        }
+
+        @keyframes shimmerText {
+            0%   { background-position: 0% center; }
+            100% { background-position: 250% center; }
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { opacity: 0; }
+            50%       { opacity: 1; }
+        }
+    </style>
+
+    <!-- RUTA CORREGIDA: se añadió / al inicio -->
+    <script src="/js/rotonda.js"></script>
+</head>
+<body class="theme-midnight">
+    <!-- Pantalla negra inicial -->
+    <div id="initialBlackScreen">
+        <div class="ibs-glow-bg"></div>
+        <div class="ibs-content">
+            <div class="ibs-logo-icon">
+                <img src="/Eclipse-icon.png" alt="Eclipse" onerror="this.style.display='none'">
+            </div>
+            <div class="ibs-logo-text">EclipseZone</div>
+            <div class="ibs-tagline">Juegos &amp; mangas traducidos</div>
+            <div class="ibs-orbit">
+                <span class="ibs-orbit-dot" style="--i:0"></span>
+                <span class="ibs-orbit-dot" style="--i:1"></span>
+                <span class="ibs-orbit-dot" style="--i:2"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de carga -->
+    <div id="loadingScreen">
+        <div class="ls-glow-bg"></div>
+        <div class="ls-card">
+            <div class="ls-logo-row">
+                <img src="/Eclipse-icon.png" alt="Eclipse" class="ls-logo-img" onerror="this.style.display='none'">
+                <span class="ls-logo-text">EclipseZone</span>
+            </div>
+            <div class="ls-status-text" id="lsStatusText">Iniciando...</div>
+            <div class="ls-bar-bg">
+                <div class="ls-bar-fill"></div>
+            </div>
+            <div class="ls-dots">
+                <span class="ls-dot" style="--dl:0s"></span>
+                <span class="ls-dot" style="--dl:.2s"></span>
+                <span class="ls-dot" style="--dl:.4s"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- authContainer vacío: los formularios viven dentro del accountModal -->
+    <div id="authContainer" style="display: none !important;"></div>
+
+    <!-- Header móvil -->
+    <div class="mobile-header">
+        <div>
+            <button aria-label="Amigos" class="header-btn" id="mobileHeaderFriendsBtn"
+                onclick="openFriendsOverlay()"
+                style="background:none;border:none;color:var(--text,#f2f3f5);width:40px;height:40px;
+                       display:flex;align-items:center;justify-content:center;border-radius:50%;
+                       cursor:pointer;font-size:1.35rem;position:relative;transition:background .18s;">
+                <i class="bi bi-people-fill"></i>
+                <span id="friendsHeaderBadge" style="display:none;position:absolute;top:4px;right:4px;
+                    background:#f23f43;color:#fff;font-size:.6rem;font-weight:700;border-radius:50%;
+                    width:14px;height:14px;align-items:center;justify-content:center;line-height:1;"></span>
+            </button>
+        </div>
+
+        <!-- Logo central -->
+        <div class="header-logo">
+            <div class="header-logo-img-wrap">
+                <img src="/Eclipse-icon.png" alt="Eclipse" class="header-logo-img" onerror="this.style.display='none'">
+                <img src="/Eclipse-icon.png" alt="" aria-hidden="true" class="header-logo-img-glow" onerror="this.style.display='none'">
+            </div>
+            <span class="header-logo-text">EclipseZone</span>
+        </div>
+
+        <!-- Espaciador derecho para centrar el logo -->
+        <div style="width: 40px;"></div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="container-fluid main-content" role="main">
+        <!-- Sección INICIO actualizada -->
+        <div id="homeContent">
+            <div class="section-header">
+                <!-- NUEVO: Descripción principal del sitio -->
+                <div class="home-description mb-4 p-3" style="background: rgba(0,0,0,0.2); border-radius: 12px;">
+                    <p class="b_caption" style="font-size: 14px; margin-bottom: 0;">
+                        <strong style="color: var(--primary);">Eclipse Zone</strong> — el mejor sitio en traducción de juegos al español.
+                        Descubre cientos de juegos y mangas traducidos, actualizados diariamente y completamente gratis.
+                    </p>
+                </div>
+
+                <!-- Acceso directo a la sección del artista del proyecto (DaniW) -->
+                <button type="button" class="btn btn-sm btn-outline-primary mb-4" onclick="document.querySelector('.artist-section')?.scrollIntoView({behavior:'smooth', block:'start'})">
+                    <i class="bi bi-brush"></i> Conocé al artista del proyecto
+                </button>
+            </div>
+
+            <!-- Panel dinámico -->
+            <div class="dynamic-panel" id="dynamicPanel">
+                <!-- Se cargará dinámicamente con el carrusel -->
+            </div>
+
+            <!-- Controles del home -->
+            <div class="home-controls">
+                <button class="btn btn-sm btn-outline-primary" onclick="refreshHomeContent()">
+                    <i class="bi bi-arrow-clockwise"></i> Actualizar
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="customizeHomePanel()">
+                    <i class="bi bi-sliders"></i> Personalizar
+                </button>
+            </div>
+        </div>
+
+<!-- Sección JUEGOS -->
+<div id="gamesContent" style="display: none;">
+    <div class="section-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div></div>
+            <div class="view-mode-selector d-flex align-items-center">
+                <div class="dropdown ms-2">
+                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
+                            id="gamesViewMode" data-bs-toggle="dropdown">
+                        <i class="bi bi-sort-down"></i> Más nuevo primero
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="setGamesViewMode('newest')">
+                            <i class="bi bi-arrow-up"></i> Más nuevo primero
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="setGamesViewMode('oldest')">
+                            <i class="bi bi-arrow-down"></i> Más antiguo primero
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            <!-- Pestañas: Todos / Favoritos / Exclusivos -->
+            <div class="favorites-tabs">
+                <div class="favorites-tab active" onclick="switchGamesTab('all')">Todos</div>
+                <div class="favorites-tab" onclick="switchGamesTab('favorites')">Favoritos</div>
+                <div class="favorites-tab favorites-tab-exclusive" onclick="switchGamesTab('exclusivos')">
+                    <i class="bi bi-gem"></i> Exclusivos
+                </div>
+            </div>
+
+            <!-- Grilla de juegos -->
+            <div id="gamesGridContent">
+                <div class="game-grid" id="gameGrid">
+                    <!-- Los juegos se cargarán dinámicamente -->
+                </div>
+                <div class="game-grid" id="favoriteGamesGrid" style="display:none;"></div>
+                <div class="game-grid" id="exclusiveGamesGrid" style="display:none;"></div>
+            </div>
+        </div>
+
+<!-- Sección MANGAS -->
+<div id="mangasContent" style="display: none;">
+
+    <!-- Header estilo juegos: botones a la derecha -->
+    <div class="section-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div></div>
+            <div class="view-mode-selector d-flex align-items-center" id="mangaTopActions">
+                <button class="btn btn-sm btn-outline-primary" id="mangaSearchToggleBtn" onclick="openMangaSearch()">
+                    <i class="bi bi-search"></i> Buscar
+                </button>
+                <button class="btn btn-sm btn-outline-primary ms-2" id="mangaFilterBtn" onclick="openMangaFilters()">
+                    <i class="bi bi-funnel"></i> Filtros
+                    <span class="active-filters-badge" id="mangaFilterBadge" style="display:none;"></span>
+                </button>
+                <div class="dropdown ms-2">
+                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
+                            id="mangaSortMode" data-bs-toggle="dropdown">
+                        <i class="bi bi-sort-down"></i> <span id="mangaSortLabel">Más nuevo primero</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="setMangaSortMode('latestUploadedChapter','desc'); return false;">
+                            <i class="bi bi-arrow-up"></i> Más nuevo primero
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="setMangaSortMode('latestUploadedChapter','asc'); return false;">
+                            <i class="bi bi-arrow-down"></i> Más antiguo primero
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="setMangaSortMode('followedCount','desc'); return false;">
+                            <i class="bi bi-star"></i> Más populares
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="setMangaSortMode('rating','desc'); return false;">
+                            <i class="bi bi-trophy"></i> Mejor valorados
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pestañas: Eclipse Mangas / MangaDex / Favoritos -->
+    <div class="favorites-tabs">
+        <div class="favorites-tab active" data-tab="eclipse" onclick="switchMangasTab('eclipse')">
+            <i class="bi bi-stars"></i> Eclipse Mangas
+        </div>
+        <div class="favorites-tab" data-tab="mangadex" onclick="switchMangasTab('mangadex')">MangaDex</div>
+        <div class="favorites-tab" data-tab="favorites" onclick="switchMangasTab('favorites')">Favoritos</div>
+    </div>
+
+    <!-- Una grilla por pestaña (se renderizan dinámicamente) -->
+    <div class="manga-grid" id="eclipseMangaGrid"></div>
+    <div class="manga-grid" id="mangaGrid" style="display:none;"></div>
+    <div class="manga-grid" id="favMangaGrid" style="display:none;"></div>
+
+    <!-- Paginación numérica -->
+    <div id="mangaPaginationContainer"></div>
+</div>
+
+<!-- Sección de noticias -->
+        <div id="newsContent" style="display: none;">
+            <div class="container-fluid py-3">
+                <div class="section-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div></div>
+                        <div class="view-mode-selector d-flex align-items-center">
+                            <button class="btn btn-sm btn-outline-primary" id="newsSearchBtn" type="button" onclick="openNewsSearchModal()">
+                                <i class="bi bi-search"></i> Buscar
+                            </button>
+                            <div class="dropdown ms-2">
+                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
+                                        id="newsViewMode" data-bs-toggle="dropdown">
+                                    <i class="bi bi-sort-down"></i> Más nuevo primero
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="setNewsViewMode('newest')">
+                                        <i class="bi bi-arrow-up"></i> Más nuevo primero
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="setNewsViewMode('oldest')">
+                                        <i class="bi bi-arrow-down"></i> Más antiguo primero
+                                    </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="favorites-tabs news-tabs">
+                    <div class="favorites-tab news-tab active" onclick="switchNewsTab('all')">Todas</div>
+                    <div class="favorites-tab news-tab" onclick="switchNewsTab('favorites')">Favoritas</div>
+                </div>
+                <div class="news-grid" id="newsGrid"></div>
+                <div class="news-grid" id="favoriteNewsGrid" style="display:none;"></div>
+                <div id="newsPaginationContainer"></div>
+            </div>
+        </div>
+
+        <!-- Sección de Búsqueda unificada -->
+        <div id="searchContent" style="display: none;">
+            <div class="container-fluid py-3">
+                <div class="search-box d-flex align-items-center mb-3">
+                    <input class="search-input" id="unifiedSearchInput" onkeyup="if(event.key==='Enter') performUnifiedSearch()" placeholder="Buscar en Juegos y Mangas..." type="text"/>
+                    <button class="btn btn-sm btn-link" onclick="performUnifiedSearch()" style="color: var(--text);" aria-label="Buscar">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+                <div class="search-filters mb-3">
+                    <div class="filter-options d-flex justify-content-center gap-3">
+                        <label class="filter-option">
+                            <input checked="" class="content-filter" onchange="performUnifiedSearch()" type="checkbox" value="games"/>
+                            <span class="filter-label">Juegos</span>
+                        </label>
+                        <label class="filter-option">
+                            <input checked="" class="content-filter" onchange="performUnifiedSearch()" type="checkbox" value="mangas"/>
+                            <span class="filter-label">Mangas</span>
+                        </label>
+                        <label class="filter-option">
+                            <input checked="" class="content-filter" onchange="performUnifiedSearch()" type="checkbox" value="news"/>
+                            <span class="filter-label">Noticias</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="search-results" id="searchResults">
+                    <div class="empty-search-state text-center py-5">
+                        <i class="bi bi-search" style="font-size: 3rem; color: var(--muted); opacity: 0.5;"></i>
+                        <p class="text-muted mt-3">Ingresa un término de búsqueda para comenzar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de navegación inferior -->
+    <div class="mobile-nav">
+        <span class="mobile-nav-indicator" id="mobileNavIndicator"></span>
+        <button aria-current="true" aria-label="Inicio" class="mobile-nav-btn active" onclick="showHome()">
+            <i class="bi bi-house-door"></i>
+            <span>Inicio</span>
+        </button>
+        <button aria-label="Juegos" class="mobile-nav-btn" onclick="showGames()">
+            <i class="bi bi-joystick"></i>
+            <span>Juegos</span>
+        </button>
+        <button aria-label="Mangas" class="mobile-nav-btn" onclick="showMangas()">
+            <i class="bi bi-book"></i>
+            <span>Mangas</span>
+        </button>
+        <button aria-label="Noticias" class="mobile-nav-btn" onclick="showNews()">
+            <i class="bi bi-newspaper"></i>
+            <span>Noticias</span>
+        </button>
+        <button id="navAccountBtn" aria-label="Cuenta" class="mobile-nav-btn mobile-nav-account"
+            onclick="openDiscordSettings('account')">
+            <div class="nav-acct-avatar">
+                <i class="bi bi-person-circle" style="font-size:1.3rem;"></i>
+            </div>
+            <span>Cuenta</span>
+        </button>
+    </div>
+
+    <!-- Reproductor de música flotante -->
+    <audio id="eclipse-bg-audio" preload="auto"></audio>
+    <div id="eclipse-radio-widget">
+        <button id="eclipse-radio-toggle" title="Pausar/reproducir" aria-label="Pausar o reproducir música">⏸</button>
+        <span id="eclipse-radio-track-name">Cargando…</span>
+        <button class="ghost" id="eclipse-radio-next" title="Siguiente canción" aria-label="Siguiente canción">⏭</button>
+    </div>
+
+    <!-- Modal de detalles para móvil (PERFIL SIMPLIFICADO) -->
+    <div aria-modal="true" class="mobile-modal" id="detailsModal" role="dialog">
+      <div class="container">
+        <div class="row gx-3">
+          <!-- COLUMNA ÚNICA: Detalles del juego -->
+          <div class="col-12 game-column" style="padding-left: 0;">
+            <h4 class="text-center mb-3" id="gameTitle"></h4>
+
+            <!-- Carrusel de imágenes -->
+            <div class="text-center mb-3">
+              <div class="carousel slide" data-bs-ride="carousel" id="gameImagesCarousel">
+                <div class="carousel-inner" id="gameImagesContainer"></div>
+                <button class="carousel-control-prev" data-bs-slide="prev" data-bs-target="#gameImagesCarousel" type="button" aria-label="Imagen anterior">
+                  <span aria-hidden="true" class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" data-bs-slide="next" data-bs-target="#gameImagesCarousel" type="button" aria-label="Imagen siguiente">
+                  <span aria-hidden="true" class="carousel-control-next-icon"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <h5>Descripción</h5>
+              <p class="text-muted" id="gameDescription"></p>
+            </div>
+
+            <!-- Star Rating -->
+            <div id="gameStarRating" class="mb-3"></div>
+
+            <!-- Botón Copiar enlace -->
+            <div class="mb-3">
+              <button id="copyLinkBtn" class="btn btn-sm btn-outline-secondary w-100" onclick="copyGameLink()">
+                <i class="bi bi-link-45deg"></i> Copiar enlace
+              </button>
+            </div>
+
+            <!-- Botón Reportar link roto -->
+            <div class="mb-3">
+              <button id="reportBrokenLinkBtn" class="btn btn-sm btn-outline-danger w-100" onclick="reportBrokenLink()">
+                <i class="bi bi-flag"></i> Reportar link roto
+              </button>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-6">
+                <p><strong style="color: var(--primary);">Tamaño:</strong> <span id="gameSize" style="color: var(--text); font-weight: 500;"></span></p>
+              </div>
+              <div class="col-6">
+                <p><strong style="color: var(--primary);">Traductores:</strong> <span id="gameTranslators" style="color: var(--text); font-weight: 500;"></span></p>
+              </div>
+              <div class="col-6">
+                <p><strong style="color: var(--primary);">Plataforma:</strong> <span id="gamePlatform" style="color: var(--text); font-weight: 500;"></span></p>
+              </div>
+              <div class="col-6">
+                <p><strong style="color: var(--primary);">Estado servidor:</strong> <span class="badge bg-success" id="gameStatus" style="color: white !important;">Disponible</span></p>
+              </div>
+              <div class="col-6">
+                <p><strong style="color: var(--primary);">Estado del juego:</strong> <span id="gameEstadoTraduccion"></span></p>
+              </div>
+              <div class="col-6">
+                <p><strong style="color: var(--primary);">Versión:</strong> <span id="gameVersion" style="color: var(--text); font-weight: 500;"></span></p>
+              </div>
+              <div class="col-6">
+                <p><strong style="color: var(--primary);">Subido por:</strong> <span id="gameUploaderName" style="font-weight:500;"></span></p>
+              </div>
+              <div class="col-6">
+                <p><strong style="color: var(--primary);">Última actualización:</strong> <span id="gameUpdatedAt" style="font-weight:500;"></span></p>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <h5>Géneros</h5>
+              <div class="d-flex flex-wrap" id="gameCategories"></div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <div class="d-grid gap-2 mb-2" id="downloadButtonsContainer"></div>
+              <button aria-label="Añadir a favoritos" class="btn btn-warning btn-lg" id="favBtn">Favoritos</button>
+            </div>
+
+            <!-- Perfil del uploader -->
+            <div id="gameUploaderProfile" class="uploader-profile-block">
+              <div class="uploader-profile-inner">
+                <img id="uploaderAvatarImg" src="https://placehold.co/56x56/2d2d2d/fff?text=?" alt="Avatar" class="uploader-avatar">
+                <div class="uploader-info">
+                  <a id="uploaderNameLink" class="uploader-name" href="#">Usuario</a>
+                  <div class="uploader-badge" id="uploaderMemberBadge">Member</div>
+                  <div class="uploader-meta">
+                    <span><i class="bi bi-calendar3"></i> <span id="uploaderFechaRegistro">-</span></span>
+                    <span><i class="bi bi-clock"></i> <span id="uploaderUltimoAcceso">-</span></span>
+                  </div>
+                </div>
+                <a id="uploaderProfileBtn" class="btn btn-sm btn-outline-primary uploader-profile-btn" href="#" target="_blank" rel="noopener">
+                  <i class="bi bi-person-circle"></i> Perfil
+                </a>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button class="bottom-close-btn" onclick="closeModal()">Cerrar</button>
+            </div>
+
+            <!-- Sección de comentarios del juego -->
+            <div id="gameCommentsContainer" class="mt-2 mb-4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- accountModal eliminado — todo migrado al panel Discord Settings -->
+
+    <!-- Modal para imágenes ampliadas -->
+    <div class="image-modal" id="imageModal" style="display: none;">
+        <span class="close-image-modal" onclick="closeImageModal()">×</span>
+        <img alt="Imagen ampliada" id="expandedImage" loading="lazy" src=""/>
+    </div>
+
+    <!-- Modal de filtros -->
+    <div class="mobile-modal" id="filtersModal">
+        <div class="container">
+            <div class="d-flex align-items-center mb-3">
+                <h4 class="mb-0">Filtros avanzados</h4>
+                <button class="btn btn-sm btn-outline-primary ms-auto" onclick="closeFiltersModal()" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="filter-section">
+                <h6><i class="bi bi-people"></i> Traductores / Servidores</h6>
+                <div class="filter-options" id="filterTranslators"></div>
+            </div>
+            <div class="filter-section">
+                <h6><i class="bi bi-device"></i> Plataformas</h6>
+                <!-- Checkboxes generados desde los datos reales de juegos.json
+                     (antes eran fijos Windows/Linux/Mac y no coincidían con
+                     los valores reales PC/Android/JoiPlay → nunca filtraban) -->
+                <div class="filter-options" id="filterPlatforms"></div>
+            </div>
+            <div class="filter-section">
+                <h6><i class="bi bi-flag"></i> Estado del servidor</h6>
+                <div class="filter-options">
+                    <label class="filter-option"><input type="checkbox" class="status-filter" value="Disponible"> 🟢 Disponible</label>
+                    <label class="filter-option"><input type="checkbox" class="status-filter" value="No disponible"> 🔴 No disponible</label>
+                    <label class="filter-option"><input type="checkbox" class="status-filter" value="Mantenimiento"> 🟡 Mantenimiento</label>
+                </div>
+            </div>
+            <div class="filter-section">
+                <h6><i class="bi bi-tags"></i> Géneros <small class="text-muted">(+ incluir, - excluir)</small></h6>
+                <input type="text" id="filterCategorySearch" class="form-control form-control-sm mb-2"
+                       placeholder="🔍 Buscar género…" autocomplete="off"
+                       style="background: var(--search-bg, rgba(255,255,255,0.06)); border-color: var(--border-color, rgba(255,255,255,0.15)); color: var(--text, #fff);"
+                       oninput="filterCategorySearchList(this.value)">
+                <div class="categories-advanced" id="filterCategoriesAdvanced"></div>
+            </div>
+            <div class="filter-section">
+                <h6><i class="bi bi-diagram-3"></i> Modo de filtrado</h6>
+                <div class="filter-options">
+                    <label class="filter-option"><input type="radio" name="filterMode" value="and" checked onchange="filterMode='and'"> Coincidir TODOS</label>
+                    <label class="filter-option"><input type="radio" name="filterMode" value="or" onchange="filterMode='or'"> Coincidir CUALQUIERA</label>
+                </div>
+            </div>
+            <div class="d-flex gap-2 mt-4">
+                <button class="btn btn-outline-primary flex-grow-1" onclick="resetFilters()"><i class="bi bi-arrow-counterclockwise"></i> Resetear</button>
+                <button class="btn btn-primary flex-grow-1" onclick="applyFilters()"><i class="bi bi-check-lg"></i> Aplicar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/accountBridge.js"></script>
+
+    <!-- Lazy-load por tipo de página (ver js/pageLoader.js): estos scripts NO
+         se piden al cargar la página, solo si document.body.dataset.page
+         coincide con data-lazy-for. Reduce de ~29 a 4 scripts síncronos por
+         página — Googlebot rastreaba JS/CSS de módulos que ninguna página
+         individual usa (manga.js en fichas de juego, juegos-*.js en manga,
+         etc.), 81% del crawl budget en "carga de recursos" en vez de HTML
+         nuevo (Search Console, confirmado sep-2026). pageLoader.js decide
+         y crea los <script src> reales — data-lazy-for con función distinta
+         a src evita que el navegador los precargue solo.
+         data-cfasync="false" en Adsterra: Cloudflare Rocket Loader no debe
+         tocarlo (necesita ejecutar en el orden/momento exacto del SDK). -->
+    <script src="/js/pageLoader.js" defer></script>
+    <!-- "idle" = no depende del tipo de página, se cargan igual en TODAS,
+         pero diferidos (requestIdleCallback + user-gesture) en vez de
+         síncronos: usuarios reales los reciben casi de inmediato, pero
+         Googlebot (que no espera/interactúa como un humano) tiene mucha
+         menos chance de ejecutarlos durante su ventana de renderizado. -->
+    <script type="application/octet-stream" data-lazy-for="idle" data-lazy-src="/js/onboarding.js"></script>
+    <script type="application/octet-stream" data-lazy-for="idle" data-lazy-src="/js/patreon.js"></script>
+    <script type="application/octet-stream" data-lazy-for="idle" data-lazy-src="/js/site-updates.js"></script>
+    <script type="application/octet-stream" data-lazy-for="idle" data-lazy-src="/js/social-popup.js"></script>
+    <script type="application/octet-stream" data-lazy-for="idle" data-lazy-src="/js/analytics.js"></script>
+    <script type="application/octet-stream" data-lazy-for="idle" data-lazy-src="/js/radio.js"></script>
+
+    <script type="application/octet-stream" data-lazy-for="manga" data-lazy-src="/js/manga.js"></script>
+
+    <script type="application/octet-stream" data-lazy-for="home juego juegos" data-lazy-src="/js/home.js"></script>
+
+    <script type="application/octet-stream" data-lazy-for="juego juegos" data-lazy-src="/js/juegos-core.js"></script>
+    <script type="application/octet-stream" data-lazy-for="juego juegos" data-lazy-src="/js/juegos-search.js"></script>
+    <script type="application/octet-stream" data-lazy-for="juego juegos" data-lazy-src="/js/juegos-render.js"></script>
+    <script type="application/octet-stream" data-lazy-for="juego juegos" data-lazy-src="/js/juegos-detail.js"></script>
+    <script type="application/octet-stream" data-lazy-for="juego juegos" data-lazy-src="/js/juegos-extras.js"></script>
+    <script type="application/octet-stream" data-lazy-for="juego juegos" data-lazy-src="/js/juegos-favorites.js"></script>
+    <script type="application/octet-stream" data-lazy-for="juego juegos" data-lazy-src="/js/juegos.js"></script>
+    <script type="application/octet-stream" data-lazy-for="juego juegos" data-lazy-src="/js/comments.js"></script>
+
+    <script type="application/octet-stream" data-lazy-for="noticia noticias" data-lazy-src="/js/noticias.js"></script>
+
+
+    <!-- Panel de detalle de manga (bottom sheet) -->
+    <div id="mangaDetailPanel">
+        <div class="manga-detail-sheet">
+            <div class="manga-detail-handle"></div>
+            <div class="manga-detail-topbar">
+                <button class="manga-detail-close" onclick="closeMangaDetail()" aria-label="Cerrar">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div id="mangaDetailBody">
+                <!-- Se rellena dinámicamente por manga.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de filtros de manga (bottom sheet) -->
+    <div id="mangaFiltersModal">
+        <div class="manga-filters-sheet">
+            <div class="manga-filters-header">
+                <h5 class="manga-filters-title">
+                    <i class="bi bi-sliders2 me-2"></i>Filtros
+                </h5>
+                <button class="manga-filters-clear" onclick="clearMangaFilters()">
+                    Restablecer
+                </button>
+            </div>
+            <div id="mangaFiltersBody">
+                <!-- Se rellena dinámicamente por manga.js -->
+            </div>
+            <div class="manga-filters-footer">
+                <button class="manga-filters-apply" onclick="applyMangaFilters()">
+                    <i class="bi bi-check2-circle me-1"></i>Aplicar filtros
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lector de capítulos (pantalla completa) -->
+    <div id="mangaReader">
+        <div class="reader-topbar">
+            <button class="reader-back-btn" onclick="closeReader()" aria-label="Volver">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <h6 id="readerTitle">Cargando...</h6>
+        </div>
+        <div class="reader-progress">
+            <div id="readerProgressBar"></div>
+        </div>
+        <div id="readerPages">
+            <!-- Páginas se cargan dinámicamente -->
+        </div>
+    </div>
+
+    <!-- ── Parche de navegación: botones activos al cambiar sección ── -->
+    <script>
+    (function () {
+        // Asegura que setActiveNavBtn esté disponible aunque main.js lo omita
+        function _setActiveNav(section) {
+            const order = ['home','games','mangas','news'];
+            const idx   = order.indexOf(section);
+            const btns = document.querySelectorAll('.mobile-nav-btn');
+            btns.forEach((btn, i) => {
+                btn.classList.toggle('active', i === idx);
+                btn.setAttribute('aria-current', i === idx ? 'true' : 'false');
+            });
+            const ind = document.getElementById('mobileNavIndicator');
+            if (ind) {
+                if (idx === -1 || !btns[idx]) {
+                    ind.style.opacity = '0';
+                } else {
+                    const target = btns[idx];
+                    const navRect = target.parentElement.getBoundingClientRect();
+                    const btnRect = target.getBoundingClientRect();
+                    const x = btnRect.left - navRect.left + (btnRect.width - 56) / 2;
+                    ind.style.transform = `translateX(${x}px)`;
+                    ind.style.opacity = '1';
+                }
+            }
+        }
+        // Exponer globalmente para que main.js, noticias.js, etc. la llamen
+        window.setActiveNavBtn = window.setActiveNavBtn || _setActiveNav;
+
+        // Interceptar los onclick de la nav si main.js no lo hace
+        const navMap = {
+            showHome   : 'home',
+            showGames  : 'games',
+            showMangas : 'mangas',
+            showNews   : 'news',
+        };
+        Object.keys(navMap).forEach(fnName => {
+            const original = window[fnName];
+            window[fnName] = function (...args) {
+                _setActiveNav(navMap[fnName]);
+                if (typeof original === 'function') original.apply(this, args);
+            };
+        });
+
+        // Conectar CommentsModule a showGameDetails
+        const _origShowGame = window.showGameDetails;
+        window.showGameDetails = async function (gameTitle, fromRoute) {
+            if (typeof _origShowGame === 'function') await _origShowGame(gameTitle, fromRoute);
+            if (window.CommentsModule) {
+                CommentsModule.render('gameCommentsContainer', { type: 'game', id: gameTitle });
+            }
+        };
+
+        // Escape cierra el modal de juego
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                const dm = document.getElementById('detailsModal');
+                if (dm && dm.classList.contains('show')) {
+                    if (typeof closeModal === 'function') closeModal();
+                }
+            }
+        });
+    })();
+    </script>
+
+    <!-- ══════════════════════════════════════════════════════
+         OVERLAY DE AUTENTICACIÓN
+         Se abre desde los botones del accountModal.
+         Usa el mismo auth-box / auth-tabs / auth-form del CSS original.
+    ══════════════════════════════════════════════════════ -->
+    <div id="authOverlay" class="auth-overlay" style="display:none;" onclick="closeAuthOverlayOnBackdrop(event)">
+        <div class="auth-box" id="authOverlayBox">
+
+            <!-- Botón cerrar -->
+            <button class="auth-overlay-close" onclick="closeAuthOverlay()" aria-label="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <!-- Tabs -->
+            <div class="auth-tabs" id="overlayTabs">
+                <div class="auth-tab active" id="overlayTabLogin" onclick="showOverlayTab('login')">
+                    Iniciar sesión
+                </div>
+                <div class="auth-tab" id="overlayTabRegister" onclick="showOverlayTab('register')">
+                    Registrarse
+                </div>
+            </div>
+
+            <!-- Formulario Login -->
+            <div class="auth-form active" id="loginForm">
+                <h2>Bienvenido de vuelta</h2>
+                <input class="auth-input" id="loginEmail" placeholder="Correo electrónico" type="email" autocomplete="username"
+                       onkeypress="if(event.key==='Enter') login()"/>
+                <input class="auth-input" id="loginPassword" placeholder="Contraseña" type="password" autocomplete="current-password"
+                       onkeypress="if(event.key==='Enter') login()"/>
+                <button class="auth-btn" onclick="login()">
+                    <i class="bi bi-box-arrow-in-right"></i> Ingresar
+                </button>
+                <div class="auth-message" id="loginMessage"></div>
+                <div class="auth-footer">
+                    <a href="#" onclick="showOverlayTab('forgot'); return false;">¿Olvidaste tu contraseña?</a>
+                </div>
+            </div>
+
+            <!-- Formulario Registro -->
+            <div class="auth-form" id="registerForm">
+                <h2>Crear cuenta</h2>
+                <input class="auth-input" id="registerName" placeholder="Nombre" type="text" autocomplete="name"/>
+                <input class="auth-input" id="registerEmail" placeholder="Correo electrónico" type="email" autocomplete="email"/>
+                <input class="auth-input" id="registerPassword" placeholder="Contraseña (mín. 6 caracteres)" type="password" autocomplete="new-password"/>
+                <input class="auth-input" id="registerConfirmPassword" placeholder="Confirmar contraseña" type="password" autocomplete="new-password"
+                       onkeypress="if(event.key==='Enter') register()"/>
+                <button class="auth-btn" onclick="register()">
+                    <i class="bi bi-person-plus"></i> Registrarse
+                </button>
+                <div class="auth-message" id="registerMessage"></div>
+                <div class="auth-footer">
+                    <i class="bi bi-info-circle"></i>
+                    Al registrarte aceptás que los comentarios inapropiados pueden resultar en la eliminación de tu cuenta.
+                </div>
+            </div>
+
+            <!-- Olvidé mi contraseña: pedir el link -->
+            <div class="auth-form" id="forgotForm">
+                <h2>Recuperar contraseña</h2>
+                <input class="auth-input" id="forgotEmail" placeholder="Correo electrónico" type="email" autocomplete="email"
+                       onkeypress="if(event.key==='Enter') requestPasswordReset()"/>
+                <button class="auth-btn" onclick="requestPasswordReset()">
+                    <i class="bi bi-envelope"></i> Enviar link de recuperación
+                </button>
+                <div class="auth-message" id="forgotMessage"></div>
+                <div class="auth-footer">
+                    <a href="#" onclick="showOverlayTab('login'); return false;">Volver a iniciar sesión</a>
+                </div>
+            </div>
+
+            <!-- Link del email: poner contraseña nueva -->
+            <div class="auth-form" id="resetForm">
+                <h2>Nueva contraseña</h2>
+                <input class="auth-input" id="resetPassword" placeholder="Contraseña nueva (mín. 6 caracteres)" type="password" autocomplete="new-password"/>
+                <input class="auth-input" id="resetPasswordConfirm" placeholder="Confirmar contraseña" type="password" autocomplete="new-password"
+                       onkeypress="if(event.key==='Enter') confirmPasswordReset()"/>
+                <button class="auth-btn" onclick="confirmPasswordReset()">
+                    <i class="bi bi-check-lg"></i> Guardar contraseña
+                </button>
+                <div class="auth-message" id="resetMessage"></div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════
+         DISCORD SETTINGS PANEL
+    ══════════════════════════════════════════════════════ -->
+    <div id="discordSettings">
+        <div class="ds-sidebar">
+            <div class="ds-section-label">Ajustes de usuario</div>
+            <button class="ds-nav-item active" data-section="account" onclick="selectDsSection('account')">
+                <i class="bi bi-person-circle"></i> Mi cuenta
+            </button>
+            <button class="ds-nav-item" data-section="profile" onclick="selectDsSection('profile')">
+                <i class="bi bi-person-vcard"></i> Perfil
+            </button>
+            <button class="ds-nav-item" data-section="friends" onclick="selectDsSection('friends')">
+                <i class="bi bi-people"></i> Amigos
+            </button>
+            <button class="ds-nav-item" data-section="support" onclick="selectDsSection('support')">
+                <i class="bi bi-question-circle"></i> Soporte
+            </button>
+            <button class="ds-nav-item" data-section="changelog" onclick="selectDsSection('changelog')">
+                <i class="bi bi-gift"></i> Novedades
+            </button>
+            <button class="ds-nav-item" data-section="downloads" onclick="selectDsSection('downloads')">
+                <i class="bi bi-clock-history"></i> Descargas
+            </button>
+            <div class="ds-nav-divider"></div>
+            <div class="ds-section-label">Ajustes de app</div>
+            <button class="ds-nav-item" data-section="appearance" onclick="selectDsSection('appearance')">
+                <i class="bi bi-palette"></i> Apariencia
+            </button>
+            <button class="ds-nav-item" data-section="accessibility" onclick="selectDsSection('accessibility')">
+                <i class="bi bi-universal-access"></i> Accesibilidad
+            </button>
+            <button class="ds-nav-item" data-section="notifications" onclick="selectDsSection('notifications')">
+                <i class="bi bi-bell"></i> Notificaciones
+            </button>
+            <button class="ds-nav-item" data-section="language" onclick="selectDsSection('language')">
+                <i class="bi bi-translate"></i> Idioma y hora
+            </button>
+            <div class="ds-nav-divider"></div>
+            <button class="ds-nav-item" style="color:#f23f43;"
+                onclick="handleLogout();closeDiscordSettings();">
+                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+            </button>
+            <div class="ds-user-panel" id="dsUserPanel"></div>
+            <div class="ds-version-tag" id="dsVersionTag">Eclipse Zone</div>
+        </div>
+        <div class="ds-content-wrap">
+            <div class="ds-content-inner" id="dsContentInner"></div>
+        </div>
+        <div class="ds-close-area">
+            <button class="ds-close-btn" onclick="closeDiscordSettings()" aria-label="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            <span class="ds-esc-label">ESC</span>
+        </div>
+    </div>
+
+    <!-- Profile Card Popup -->
+    <div id="profileCardPopup"></div>
+
+    <!-- Emoji / Sticker Picker -->
+    <div id="emojiPicker">
+        <div class="ep-tabs">
+            <button class="ep-tab" data-tab="gif" onclick="setEmojiTab('gif')">GIF</button>
+            <button class="ep-tab" data-tab="stickers" onclick="setEmojiTab('stickers')">
+                <i class="bi bi-image"></i> Stickers
+            </button>
+            <button class="ep-tab active" data-tab="emojis" onclick="setEmojiTab('emojis')">
+                <i class="bi bi-emoji-smile"></i> Emojis
+            </button>
+            <button class="ep-tab" data-tab="kaomoji" onclick="setEmojiTab('kaomoji')">^▽^</button>
+        </div>
+        <div class="ep-search">
+            <input type="text" id="epSearchInput" placeholder="Buscar…">
+        </div>
+        <div class="ep-body" id="epBody"></div>
+    </div>
+    <div id="epPreview" class="ep-preview"></div>
+
+    <!-- discord-settings y discord-friends: cargados BAJO DEMANDA (ver
+         js/pageLoader.js → window.openDiscordSettings/openFriendsOverlay
+         son stubs que cargan estos 7 scripts la primera vez que se llaman
+         y re-invocan la función real una vez lista). Antes cargaban
+         síncronos en TODA página para que estuvieran listos "desde el
+         primer click" — pero eso es exactamente lo que Googlebot ejecuta
+         en cada una de las 742+ fichas sin necesitarlos jamás (nadie
+         indexado abre el panel de Discord). data-cfasync="false" en cada
+         uno: Cloudflare Rocket Loader no debe tocarlos (su parser corrompe
+         comentarios con caracteres UTF-8 box-drawing ─, SyntaxError línea
+         249) — se preserva en pageLoader.js al crear el <script> real. -->
+    <script type="application/octet-stream" data-lazy-for="discord-panel" data-cfasync="false" data-lazy-src="/js/discord-settings-core.js"></script>
+    <script type="application/octet-stream" data-lazy-for="discord-panel" data-cfasync="false" data-lazy-src="/js/discord-settings-account.js"></script>
+    <script type="application/octet-stream" data-lazy-for="discord-panel" data-cfasync="false" data-lazy-src="/js/discord-settings-panels.js"></script>
+    <script type="application/octet-stream" data-lazy-for="discord-panel" data-cfasync="false" data-lazy-src="/js/discord-settings-profile-card.js"></script>
+    <script type="application/octet-stream" data-lazy-for="discord-panel" data-cfasync="false" data-lazy-src="/js/discord-settings-emoji.js"></script>
+    <script type="application/octet-stream" data-lazy-for="discord-panel" data-cfasync="false" data-lazy-src="/js/discord-settings-dm.js"></script>
+    <script type="application/octet-stream" data-lazy-for="discord-panel" data-cfasync="false" data-lazy-src="/js/discord-friends.js"></script>
+
+</body>
+</html>
